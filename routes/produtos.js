@@ -8,11 +8,29 @@ router.get("/", (req, res, next) => {
         if (error) {
             return res.status(500).send({ error: error });
         }
-        conn.query("SELECT * FROM produtos;", (error, resultado, field) => {
+        conn.query("SELECT * FROM produtos;", (error, result, field) => {
             if (error) {
                 return res.status(500).send({ error: error });
             }
-            return res.status(200).send({ response: resultado });
+            const response = {
+                quantidade: result.length,
+                produtos: result.map((prod) => {
+                    return {
+                        id_produto: prod.id_produto,
+                        nome: prod.nome,
+                        preco: prod.preco,
+                        quantidade: prod.quantidade,
+                        request: {
+                            tipo: "GET",
+                            descricao: "Retorna todos os produtos",
+                            url:
+                                "http://localhost:3000/produtos/" +
+                                prod.id_produto,
+                        },
+                    };
+                }),
+            };
+            return res.status(200).send(response);
         });
     });
 });
