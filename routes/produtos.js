@@ -162,14 +162,25 @@ router.delete("/", (req, res, next) => {
         conn.query(
             `DELETE FROM produtos WHERE id_produto = ?`,
             [req.body.id_produto],
-            (error, resultado, field) => {
+            (error, result, field) => {
                 conn.release();
                 if (error) {
                     return res.status(500).send({ error: error });
                 }
-                res.status(202).send({
-                    menssagem: "Produto excluido com sucesso",
-                });
+                const response = {
+                    menssagem: "Produto removido com sucesso",
+                    request: {
+                        tipo: "POST",
+                        descricao: "Insere um produto",
+                        url: "http://localhost:3000/produtos",
+                        body: {
+                            nome: "String",
+                            preco: "Number",
+                            quantidade: "Number",
+                        },
+                    },
+                };
+                return res.status(202).send(response);
             }
         );
     });
