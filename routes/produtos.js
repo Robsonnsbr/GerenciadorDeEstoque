@@ -45,7 +45,7 @@ router.post("/", (req, res, next) => {
         conn.query(
             "INSERT INTO produtos (nome, preco, quantidade) VALUE (?,?,?)",
             [req.body.nome, req.body.preco, req.body.quantidade],
-            (error, result, field) => {
+            (error, resultado, field) => {
                 conn.release();
                 if (error) {
                     return res.status(500).send({ error: error });
@@ -53,7 +53,7 @@ router.post("/", (req, res, next) => {
                 const response = {
                     menssagem: "Produto inserido com sucesso",
                     produtoCriado: {
-                        id_produto: result.id_produto,
+                        id_produto: resultado.id_produto,
                         nome: req.body.nome,
                         preco: req.body.preco,
                         quantidade: req.body.quantidade,
@@ -125,14 +125,29 @@ router.patch("/", (req, res, next) => {
                 req.body.quantidade,
                 req.body.id_produto,
             ],
-            (error, resultado, field) => {
+            (error, result, field) => {
                 conn.release();
                 if (error) {
                     return res.status(500).send({ error: error });
                 }
-                res.status(202).send({
-                    menssagem: "Produto atualizado com sucesso",
-                });
+                const response = {
+                    menssagem: "Produto atualizado com sucesso!",
+                    produtoAtualizado: {
+                        id_produto: req.body.id_produto,
+                        nome: req.body.nome,
+                        preco: req.body.preco,
+                        quantidade: req.body.quantidade,
+                        request: {
+                            tipo: "GET",
+                            descricao:
+                                "Retorna os detalhes de um produto específico",
+                            url:
+                                "http://localhost:3000/produtos/" +
+                                req.body.id_produto,
+                        },
+                    },
+                };
+                return res.status(202).send(response);
             }
         );
     });
