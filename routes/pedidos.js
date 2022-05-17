@@ -65,7 +65,7 @@ router.post("/", (req, res, next) => {
                 }
                 if (result.length === 0) {
                     return res.status(404).send({
-                        menssagem: "Produto não encontrado",
+                        mensagem: "Produto não encontrado",
                     });
                 }
                 conn.query(
@@ -77,7 +77,7 @@ router.post("/", (req, res, next) => {
                             return res.status(500).send({ error: error });
                         }
                         const response = {
-                            menssagem: "Pedido inserido com sucesso",
+                            mensagem: "Pedido inserido com sucesso",
                             pedidoCriado: {
                                 id_pedido: result.id_pedido,
                                 id_produto: req.body.id_produto,
@@ -112,7 +112,7 @@ router.get("/:id_pedido", (req, res, next) => {
                 }
                 if (result.length === 0) {
                     return res.status(404).send({
-                        menssagem: "Não foi encontrado pedido com esse ID",
+                        mensagem: "Não foi encontrado pedido com esse ID",
                     });
                 }
                 const response = {
@@ -136,7 +136,7 @@ router.get("/:id_pedido", (req, res, next) => {
 // ALTERA UM PEDIDO
 // router.patch("/", (req, res, next) => {
 //     res.status(201).send({
-//         menssagem: "O Pedido foi atualizado",
+//         mensagem: "O Pedido foi atualizado",
 //     });
 // });
 
@@ -155,7 +155,7 @@ router.delete("/", (req, res, next) => {
                     return res.status(500).send({ error: error });
                 }
                 const response = {
-                    menssagem: "Pedido removido com sucesso",
+                    mensagem: "Pedido removido com sucesso",
                     request: {
                         tipo: "POST",
                         descricao: "Insere um pedido",

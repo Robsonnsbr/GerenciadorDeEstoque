@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const mysql = require("../mysql").pool;
 const multer = require("multer");
+const login = require("../middleware/login");
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -52,7 +53,7 @@ router.get("/", (req, res, next) => {
 });
 
 // INSERIR UM PRODUTO
-router.post("/", upload.single("produto_imagem"), (req, res, next) => {
+router.post("/", upload.single("produto_imagem"), login, (req, res, next) => {
     console.log(req.file);
     mysql.getConnection((error, conn) => {
         if (error) {
@@ -67,7 +68,7 @@ router.post("/", upload.single("produto_imagem"), (req, res, next) => {
                     return res.status(500).send({ error: error });
                 }
                 const response = {
-                    menssagem: "Produto inserido com sucesso",
+                    mensagem: "Produto inserido com sucesso",
                     produtoCriado: {
                         id_produto: result.id_produto,
                         nome: req.body.nome,
@@ -101,7 +102,7 @@ router.get("/:id_produto", (req, res, next) => {
                 }
                 if (result.length === 0) {
                     return res.status(404).send({
-                        menssagem: "Não foi encontrado produto com esse ID",
+                        mensagem: "Não foi encontrado produto com esse ID",
                     });
                 }
                 const response = {
@@ -124,7 +125,7 @@ router.get("/:id_produto", (req, res, next) => {
 });
 
 // ALTERA UM PRODUTO
-router.patch("/", (req, res, next) => {
+router.patch("/", login, (req, res, next) => {
     mysql.getConnection((error, conn) => {
         if (error) {
             return res.status(500).send({ error: error });
@@ -147,7 +148,7 @@ router.patch("/", (req, res, next) => {
                     return res.status(500).send({ error: error });
                 }
                 const response = {
-                    menssagem: "Produto atualizado com sucesso!",
+                    mensagem: "Produto atualizado com sucesso!",
                     produtoAtualizado: {
                         id_produto: req.body.id_produto,
                         nome: req.body.nome,
@@ -170,7 +171,7 @@ router.patch("/", (req, res, next) => {
 });
 
 // EXCLUI UM PRODUTO
-router.delete("/", (req, res, next) => {
+router.delete("/", login, (req, res, next) => {
     mysql.getConnection((error, conn) => {
         if (error) {
             return res.status(500).send({ error: error });
@@ -184,7 +185,7 @@ router.delete("/", (req, res, next) => {
                     return res.status(500).send({ error: error });
                 }
                 const response = {
-                    menssagem: "Produto removido com sucesso",
+                    mensagem: "Produto removido com sucesso",
                     request: {
                         tipo: "POST",
                         descricao: "Insere um produto",

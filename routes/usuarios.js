@@ -18,7 +18,7 @@ router.post("/cadastro", (req, res, next) => {
                 }
                 if (results.length > 0) {
                     res.status(401).send({
-                        menssagem: "Usuário já cadastrado",
+                        mensagem: "Usuário já cadastrado",
                     });
                 } else {
                     bcrypt.hash(req.body.senha, 10, (errBcrypt, hash) => {
@@ -36,7 +36,7 @@ router.post("/cadastro", (req, res, next) => {
                                         .send({ error: error });
                                 }
                                 response = {
-                                    menssagem: "Usuário criado com sucesso",
+                                    mensagem: "Usuário criado com sucesso",
                                     usuarioCriado: {
                                         id_usuario: results.insertId,
                                         email: req.body.email,
@@ -66,13 +66,13 @@ router.post("/login", (req, res, next) => {
             if (results.length < 1) {
                 return res
                     .status(401)
-                    .send({ menssagem: "Falha na autenticação" });
+                    .send({ mensagem: "Falha na autenticação" });
             }
             bcrypt.compare(req.body.senha, results[0].senha, (err, result) => {
                 if (err) {
                     return res
                         .status(401)
-                        .send({ menssagem: "Falha na autenticação" });
+                        .send({ mensagem: "Falha na autenticação" });
                 }
                 if (result) {
                     const token = jwt.sign(
@@ -86,13 +86,13 @@ router.post("/login", (req, res, next) => {
                         }
                     );
                     return res.status(200).send({
-                        menssagem: "Autenticado com sucesso",
+                        mensagem: "Autenticado com sucesso",
                         token: token,
                     });
                 }
                 return res
                     .status(401)
-                    .send({ menssagem: "Falha na autenticação" });
+                    .send({ mensagem: "Falha na autenticação" });
             });
         });
     });
