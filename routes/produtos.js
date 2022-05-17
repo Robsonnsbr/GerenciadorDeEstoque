@@ -1,6 +1,17 @@
 const express = require("express");
 const router = express.Router();
 const mysql = require("../mysql").pool;
+const multer = require("multer");
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, "./uploads/");
+    },
+    filename: function (req, file, cb) {
+        cb(null, new Date().toISOString() + file.originalname);
+    },
+});
+const upload = multer({ storage: storage });
 
 // RETORNA TODOS OS PRODUTOS
 router.get("/", (req, res, next) => {
@@ -8,36 +19,41 @@ router.get("/", (req, res, next) => {
         if (error) {
             return res.status(500).send({ error: error });
         }
-        conn.query("SELECT * FROM produtos;", (error, result, field) => {
-            if (error) {
-                return res.status(500).send({ error: error });
+        conn.query(
+            `SELECT nome, preco, quantidade, SUM(quantidade) AS total FROM produtos;`,
+            (error, result, field) => {
+                if (error) {
+                    return res.status(500).send({ error: error });
+                }
+                const response = {
+                    quantidade: result.length,
+                    produtos: result.map((prod) => {
+                        return {
+                            id_produto: prod.id_produto,
+                            nome: prod.nome,
+                            preco: prod.preco,
+                            quantidade: prod.quantidade,
+                            quantidade_Total: prod.total,
+                            request: {
+                                tipo: "GET",
+                                descricao:
+                                    "Retorna os detalhes de um produto específico",
+                                url:
+                                    "http://localhost:3000/produtos/" +
+                                    prod.id_produto,
+                            },
+                        };
+                    }),
+                };
+                return res.status(200).send(response);
             }
-            const response = {
-                quantidade: result.length,
-                produtos: result.map((prod) => {
-                    return {
-                        id_produto: prod.id_produto,
-                        nome: prod.nome,
-                        preco: prod.preco,
-                        quantidade: prod.quantidade,
-                        request: {
-                            tipo: "GET",
-                            descricao:
-                                "Retorna os detalhes de um produto específico",
-                            url:
-                                "http://localhost:3000/produtos/" +
-                                prod.id_produto,
-                        },
-                    };
-                }),
-            };
-            return res.status(200).send(response);
-        });
+        );
     });
 });
 
 // INSERIR UM PRODUTO
-router.post("/", (req, res, next) => {
+router.post("/", upload.single("produto_imagem"), (req, res, next) => {
+    console.log(req.file);
     mysql.getConnection((error, conn) => {
         if (error) {
             return res.status(500).send({ error: error });
