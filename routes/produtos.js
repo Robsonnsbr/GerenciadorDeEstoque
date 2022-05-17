@@ -45,7 +45,7 @@ router.post("/", (req, res, next) => {
         conn.query(
             "INSERT INTO produtos (nome, preco, quantidade) VALUE (?,?,?)",
             [req.body.nome, req.body.preco, req.body.quantidade],
-            (error, resultado, field) => {
+            (error, result, field) => {
                 conn.release();
                 if (error) {
                     return res.status(500).send({ error: error });
@@ -53,7 +53,7 @@ router.post("/", (req, res, next) => {
                 const response = {
                     menssagem: "Produto inserido com sucesso",
                     produtoCriado: {
-                        id_produto: resultado.id_produto,
+                        id_produto: result.id_produto,
                         nome: req.body.nome,
                         preco: req.body.preco,
                         quantidade: req.body.quantidade,
