@@ -71,6 +71,9 @@ exports.postPedidos = (req, res, next) => {
                         mensagem: "Produto não encontrado",
                     });
                 }
+                let produto = result.map((prod) => {
+                    return prod.preco;
+                });
                 conn.query(
                     `INSERT INTO pedidos (id_usuario, id_produto, qt_pedido, dt_pedido) VALUE (?,?,?,${dataAtual})`,
                     [
@@ -91,7 +94,7 @@ exports.postPedidos = (req, res, next) => {
                                 id_pedido: result.id_pedido,
                                 id_produto: req.body.id_produto,
                                 quantidade: req.body.qt_pedido,
-                                data: result.dt_pedido,
+                                ValorTitulo: produto * req.body.qt_pedido,
                                 request: {
                                     tipo: "GET",
                                     descricao: "Retorna todos os pedidos",
@@ -99,6 +102,7 @@ exports.postPedidos = (req, res, next) => {
                                 },
                             },
                         };
+                        console.log(response);
                         return res.status(201).send(response);
                     }
                 );
